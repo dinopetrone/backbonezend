@@ -1,0 +1,38 @@
+<?php
+$this -> headMeta() -> appendHttpEquiv('Content-Type', 'text/html;charset=utf-8');
+$this -> headTitle() -> setSeparator(' - ');
+$this -> headTitle('Zend Backbone');
+$controllername =  Zend_Controller_Front::getInstance()->getRequest()->getControllerName();
+?>
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Zend Backbone</title>
+		<!--<?php echo $this -> headLink() -> prependStylesheet($this -> baseUrl() . '/resources/css/styles.css');?>-->
+		<?php echo $this -> headMeta();?>
+		<?php echo $this -> headTitle();?>
+	</head>
+
+	<body>
+		<?
+		 if($controllername == 'How-it-works'){
+		 	//if you are in the solutions page, i'm only sending back a partial page, not all this other crap around it
+		 	echo $this->partial('_partials/how-it-works-sub-nav.phtml');
+		 	echo '<div id="how-it-works-container">'; 
+			echo $this -> layout() -> content;	
+		 	echo '</div>';
+		 }else{
+		 	echo $this -> layout() -> content;
+		 }
+		 	
+		 ?>
+		<?php
+		$this -> headScript() -> prependFile('/resources/js/lib/mustache.js', 'text/javascript');
+		$this -> headScript() -> prependFile('/resources/js/lib/backbone-min.js', 'text/javascript');
+		$this -> headScript() -> prependFile('/resources/js/lib/underscore-min.js', 'text/javascript');
+		$this -> headScript() -> prependFile('/resources/js/lib/jquery-1.7.1.min.js', 'text/javascript');
+		?>
+		<?php echo $this->headScript()?>
+		
+	</body>
+</html>
