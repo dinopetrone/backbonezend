@@ -14,16 +14,14 @@ $controllername =  Zend_Controller_Front::getInstance()->getRequest()->getContro
 	</head>
 
 	<body>
-		<?
-		 if($controllername == 'How-it-works'){
-		 	//if you are in the solutions page, i'm only sending back a partial page, not all this other crap around it
-		 	echo $this->partial('_partials/how-it-works-sub-nav.phtml');
-		 	echo '<div id="how-it-works-container">'; 
-			echo $this -> layout() -> content;	
-		 	echo '</div>';
-		 }else{
-		 	echo $this -> layout() -> content;
-		 }
+		<?php if($controllername == 'How-it-works'): ?>
+		 	<?php echo $this->partial('_partials/how-it-works-sub-nav.phtml') ?>
+		 	<div id="how-it-works-container">
+			<?php echo $this -> layout() -> content; ?>
+		 	</div>
+		<?else:?>		 
+		 	<?php echo $this -> layout() -> content; ?>
+		<?php endif; ?>
 		 	
 		 ?>
 		<?php
