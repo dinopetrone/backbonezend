@@ -23,7 +23,6 @@ $controllername =  Zend_Controller_Front::getInstance()->getRequest()->getContro
 		 	<?php echo $this -> layout() -> content; ?>
 		<?php endif; ?>
 		 	
-		 ?>
 		<?php
 		$this -> headScript() -> prependFile('/resources/js/lib/mustache.js', 'text/javascript');
 		$this -> headScript() -> prependFile('/resources/js/lib/backbone-min.js', 'text/javascript');

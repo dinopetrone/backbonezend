@@ -1,72 +1,69 @@
 var HowItWorks = HowItWorks || {}
 
 HowItWorks.HowItWorksModel = Backbone.Model.extend({
-	initialize: function() {
+	initialize : function() {
 
 	},
-	defaults: {
-		currentView:null,
-		previousView:null,
-		direction:null,
+	defaults : {
+		currentView : null,
+		previousView : null,
+		direction : null,
 	}
 });
 
 HowItWorks.CenterModulePage = Backbone.View.extend({
-	el: $('#how-it-works-container'),
-	render: function () {
+	container : $('#how-it-works-container'), 
+	render : function() {
 		var template = null;
 		var url = "/How-it-works/" + this.options.path;
 		var that = this;
+		this.container.html(this.$el);
 		$.ajax({
-			url: url,
-			type:'POST',
-			dataType:'html',
-			success: function(data) {
-				$(that.el).append(data);
+			url : url,
+			type : 'POST',
+			dataType : 'html',
+			success : function(template) {
+				that.$el.append(template)
+				that.$el.hide(0);
+				that.animateIn()
 			}
 		});
+		return this;
 	},
-	animateIn: function() {
-		$(this.el).fadeIn();
+	animateIn : function() {
+		this.$el.fadeIn();
 	},
-	animateOut: function() {
-		$(this.el).fadeOut();
+	animateOut : function() {
+		this.$el.fadeOut();
 	}
 });
 
 HowItWorks.HowItWorksRouter = Backbone.Router.extend({
-	routes: {
+	routes : {
 		//"": "index",
-		"*actions": "defaultRoute"
+		"*actions" : "defaultRoute"
 	},
-	index: function(  ) {
-
-	},
-	defaultRoute: function(path) {
-		if(!this.ignoreFirst) {
-			this.ignoreFirst = true;
-			return
-		}
+	defaultRoute : function(path) {
 		//set model
 		//appModel set previous view to model current view
 		//appModel set current view
 		var page = new HowItWorks.CenterModulePage({
-			path:path
+			path : path
 		})
 		page.render()
 
 	}
 });
 
-$( function() {
+$(function() {
 	// setup button listeners
 	$('.backbone-url').on('click', function() {
 		var path = $(this).attr('href')
 		// have to kill the prefix so that this works on ie7
-		path = path.replace('/How-it-works','');
+		path = path.replace('/How-it-works', '');
 		router.navigate(path, {
-			trigger: true,
-			root: "/How-it-works/"
+			trigger : true,
+			root : "/How-it-works/"
 		});
 		return false;
 	})
@@ -75,6 +72,7 @@ $( function() {
 var appModel = new HowItWorks.HowItWorksModel();
 var router = new HowItWorks.HowItWorksRouter();
 Backbone.history.start({
-	pushState: true,
-	root: "/How-it-works/"
+	pushState : true,
+	root : "/How-it-works/",
+	silent : true
 })
