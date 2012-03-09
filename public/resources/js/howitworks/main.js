@@ -1,33 +1,73 @@
 var HowItWorks = HowItWorks || {}
 
+HowItWorks.PageCollection = Backbone.Collection.extend({
+	model : HowItWorks.CenterModulePageModel
+});
+
 HowItWorks.HowItWorksModel = Backbone.Model.extend({
 	initialize : function() {
-
+		var self = this;
+		var tempArr = [];
+		$('#how-it-works-subnav .backbone-url').each(function() {
+			var viewArr = self.get('viewArray');
+			var url = $(this).attr('href');
+			var pageModel = new HowItWorks.CenterModulePageModel({templateUrl:url})
+			tempArr.push(pageModel)
+		})
+		self.get('pageCollection').add(tempArr);
 	},
 	defaults : {
 		currentView : null,
-		previousView : null,
 		direction : null,
+		pageCollection : new HowItWorks.PageCollection()
+	},
+	isOnThe : function(key) {
+		return 'right';
 	}
 });
 
-HowItWorks.CenterModulePage = Backbone.View.extend({
-	container : $('#how-it-works-container'), 
-	render : function() {
-		var template = null;
-		var url = "/How-it-works/" + this.options.path;
-		var that = this;
-		this.container.html(this.$el);
+
+
+HowItWorks.CenterModulePageModel = Backbone.Model.extend({
+	initialize : function() {
+		var self = this;
 		$.ajax({
-			url : url,
+			url : self.get('templateUrl'),
 			type : 'POST',
 			dataType : 'html',
 			success : function(template) {
-				that.$el.append(template)
-				that.$el.hide(0);
-				that.animateIn()
+				self.set({template:template})
 			}
 		});
+	},
+	defaults : {
+		templateUrl : "/How-it-works/",
+		template : null,
+		index : 0
+	}
+})
+
+HowItWorks.CenterModulePage = Backbone.View.extend({
+	initialize : function() {
+		var self = this;
+		appModel.bind('change:currentView', function() {
+			self.onViewChange();
+		})
+	},
+	container : $('#how-it-works-container'),
+	onViewChange : function() {
+		if(this != appModel.get('currentView')) {
+			//i'm not the current view...i need to die
+			this.animateOut()
+		}
+	},
+	render : function() {
+		var template = null;
+		var url = "/How-it-works/" + this.options.path;
+		this.container.append(this.$el);
+		this.$el.append(this.options.model.get('template'))
+		this.$el.hide(0);
+		this.animateIn()
 		return this;
 	},
 	animateIn : function() {
@@ -44,14 +84,19 @@ HowItWorks.HowItWorksRouter = Backbone.Router.extend({
 		"*actions" : "defaultRoute"
 	},
 	defaultRoute : function(path) {
-		//set model
-		//appModel set previous view to model current view
-		//appModel set current view
+		//get current view model based on path, create a new view, and pass the correct model
+		var collection = appModel.get('pageCollection');
+		var selectedModel = collection.find(function(model){
+			return model.get('templateUrl').indexOf(path) != -1;
+		})
+		//console.log(JSON.stringify(selectedModel))
 		var page = new HowItWorks.CenterModulePage({
-			path : path
+			model : selectedModel
 		})
 		page.render()
-
+		appModel.set({
+			currentView : page
+		})
 	}
 });
 
@@ -68,9 +113,12 @@ $(function() {
 		return false;
 	})
 })
-
 var appModel = new HowItWorks.HowItWorksModel();
 var router = new HowItWorks.HowItWorksRouter();
+new HowItWorks.CenterModulePage({
+	el : $('#how-it-works-container>div')
+})
+
 Backbone.history.start({
 	pushState : true,
 	root : "/How-it-works/",

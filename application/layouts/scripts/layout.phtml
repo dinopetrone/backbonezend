@@ -17,7 +17,9 @@ $controllername =  Zend_Controller_Front::getInstance()->getRequest()->getContro
 		<?php if($controllername == 'How-it-works'): ?>
 		 	<?php echo $this->partial('_partials/how-it-works-sub-nav.phtml') ?>
 		 	<div id="how-it-works-container">
-			<?php echo $this -> layout() -> content; ?>
+		 		<div>
+				<?php echo $this -> layout() -> content; ?>
+				</div>
 		 	</div>
 		<?else:?>		 
 		 	<?php echo $this -> layout() -> content; ?>
